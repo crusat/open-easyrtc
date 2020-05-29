@@ -751,55 +751,58 @@ var Easyrtc = function() {
     this.setScreenCapture = function(enableScreenCapture, mediaSourceId) {
 
         if (enableScreenCapture) {
+            self._presetMediaConstraints = {
+                video: 'screenshare',
+            }
 
             // Set video
-            self._presetMediaConstraints = {
-                    video:{
-                        mozMediaSource: "screen",
-                        chromeMediaSource: 'screen',
-                        mediaSource: "screen",
-                        mediaSourceId: 'screen:0',
-                        maxWidth: screen.width,
-                        maxHeight: screen.height,
-                        minWidth: screen.width,
-                        minHeight: screen.height,
-                        minFrameRate: 1,
-                        maxFrameRate: 15
-                    },
-                    // In Chrome, the chrome.desktopCapture extension API can be used to capture the screen,
-                    // which includes system audio (but only on Windows and Chrome OS and without plans for OS X or Linux).
-                    // - http://stackoverflow.com/questions/34235077/capture-system-sound-from-browser?answertab=votes#tab-top
-                    audio: false
-                    /*
-                    {
-                        optional: {
-                            chromeMediaSource: 'system',
-                            chromeMediaSourceId: that.chromeMediaSourceId
-                        }
-                    }
-                    */
-                };
+            // self._presetMediaConstraints = {
+            //         video:{
+            //             mozMediaSource: "screen",
+            //             chromeMediaSource: 'screen',
+            //             mediaSource: "screen",
+            //             mediaSourceId: 'screen:0',
+            //             maxWidth: screen.width,
+            //             maxHeight: screen.height,
+            //             minWidth: screen.width,
+            //             minHeight: screen.height,
+            //             minFrameRate: 1,
+            //             maxFrameRate: 15
+            //         },
+            //         // In Chrome, the chrome.desktopCapture extension API can be used to capture the screen,
+            //         // which includes system audio (but only on Windows and Chrome OS and without plans for OS X or Linux).
+            //         // - http://stackoverflow.com/questions/34235077/capture-system-sound-from-browser?answertab=votes#tab-top
+            //         audio: false
+            //         /*
+            //         {
+            //             optional: {
+            //                 chromeMediaSource: 'system',
+            //                 chromeMediaSourceId: that.chromeMediaSourceId
+            //             }
+            //         }
+            //         */
+            //     };
 
-            if (mediaSourceId) {
-                if (
-                    adapter && adapter.browserDetails &&
-                        (adapter.browserDetails.browser === "chrome")
-                ) {
-
-                    var mandatory = self._presetMediaConstraints.video;
-                    mandatory.chromeMediaSource = 'desktop';
-                    mandatory.chromeMediaSourceId = mediaSourceId;
-                    self._presetMediaConstraints.video = {
-                        mandatory: mandatory,
-                        // http://www.acis.ufl.edu/~ptony82/jingle-html/classwebrtc_1_1MediaConstraintsInterface.html
-                        optional: [{
-                            googTemporalLayeredScreencast: true
-                        }]
-                    };
-                } else {
-                    self._presetMediaConstraints.video.mediaSourceId = mediaSourceId;
-                }
-            }
+            // if (mediaSourceId) {
+            //     if (
+            //         adapter && adapter.browserDetails &&
+            //             (adapter.browserDetails.browser === "chrome")
+            //     ) {
+            //
+            //         var mandatory = self._presetMediaConstraints.video;
+            //         mandatory.chromeMediaSource = 'desktop';
+            //         mandatory.chromeMediaSourceId = mediaSourceId;
+            //         self._presetMediaConstraints.video = {
+            //             mandatory: mandatory,
+            //             // http://www.acis.ufl.edu/~ptony82/jingle-html/classwebrtc_1_1MediaConstraintsInterface.html
+            //             optional: [{
+            //                 googTemporalLayeredScreencast: true
+            //             }]
+            //         };
+            //     } else {
+            //         self._presetMediaConstraints.video.mediaSourceId = mediaSourceId;
+            //     }
+            // }
 
         // Clear
         } else {
@@ -2310,6 +2313,8 @@ var Easyrtc = function() {
      */
     this.initMediaSource = function(successCallback, errorCallback, streamName) {
 
+        var STREAM_NAME_SCREENSHARE = 'screenshare';
+
         logDebug("about to request local media");
 
         if (!streamName) {
@@ -2444,7 +2449,11 @@ var Easyrtc = function() {
             var currentTime = getCurrentTime();
             if (currentTime < firstCallTime + 1000) {
                 logDebug("Trying getUserMedia a second time");
-                navigator.mediaDevices.getUserMedia(mode).then(onUserMediaSuccess).catch(onUserMediaError);
+                if (mode.video === STREAM_NAME_SCREENSHARE) {
+                    navigator.mediaDevices.getDisplayMedia({video: true}).then(onUserMediaSuccess).catch(onUserMediaError);
+                } else {
+                    navigator.mediaDevices.getUserMedia(mode).then(onUserMediaSuccess).catch(onUserMediaError);
+                }
             }
             else {
                 onUserMediaError(err);
@@ -2457,7 +2466,11 @@ var Easyrtc = function() {
         // In addition, I'm going to try again after 3 seconds.
         //
         firstCallTime = getCurrentTime();
-        navigator.mediaDevices.getUserMedia(mode).then(onUserMediaSuccess).catch(tryAgain);
+        if (mode.video === STREAM_NAME_SCREENSHARE) {
+            navigator.mediaDevices.getDisplayMedia({video: true}).then(onUserMediaSuccess).catch(tryAgain);
+        } else {
+            navigator.mediaDevices.getUserMedia(mode).then(onUserMediaSuccess).catch(tryAgain);
+        }
     };
 
     /**
