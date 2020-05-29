@@ -6540,6 +6540,14 @@ var Easyrtc = function() {
     };
 
     /**
+     * Determines if the local browser supports WebRTC getDisplayMedia (access to screenshare).
+     * @returns {Boolean} True getDisplayMedia is supported.
+     */
+    this.supportsGetDisplayMedia = function() {
+        return navigator.mediaDevices && typeof navigator.mediaDevices.getDisplayMedia !== 'undefined';
+    };
+
+    /**
      * Determines if the local browser supports WebRTC Peer connections to the extent of being able to do video chats.
      * @returns {Boolean} True if Peer connections are supported.
      */
