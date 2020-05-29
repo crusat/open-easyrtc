@@ -21,7 +21,7 @@
         <script type="text/javascript" src="js/demo_screenshare_simple.js"></script>
 
     </head>
-    <body onload="connect();">
+    <body>
         <!--hide-->
         <div id="container">
             <div id="header">
@@ -49,6 +49,10 @@
                 <div id="demoContainer">
                     <div id="connectControls">
                         <div id="iam">Not yet connected...</div>
+                        <br />
+                        <button onclick="connect(false);return false;">connect (camera)</button>
+                        <button onclick="connect(true);return false;">connect (screenshare)</button>
+                        <button onclick="disconnect();return false;">disconnect</button>
                         <br />
                         <strong>Connected users:</strong>
                         <div id="otherClients"></div>

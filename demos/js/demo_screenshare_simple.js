@@ -1,9 +1,8 @@
 var selfEasyrtcid = "";
 
 
-function connect() {
-    // easyrtc.setVideoDims(640,480);
-    easyrtc.setScreenCapture(true);
+function connect(screenshare) {
+    easyrtc.setScreenCapture(screenshare);
     easyrtc.setRoomOccupantListener(convertListToButtons);
     easyrtc.easyApp("easyrtc.audioVideoSimple", "selfVideo", ["callerVideo"], loginSuccess, loginFailure);
  }
@@ -52,4 +51,9 @@ function loginSuccess(easyrtcid) {
 
 function loginFailure(errorCode, message) {
     easyrtc.showError(errorCode, message);
+}
+
+function disconnect() {
+    var selfVideo = document.getElementById('selfVideo');
+    easyrtc.turnOff(selfVideo);
 }

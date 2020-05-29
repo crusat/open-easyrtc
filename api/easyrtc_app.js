@@ -442,6 +442,7 @@
         }
 
         var stream = easyrtc.getLocalStream(null);
+        console.log('SSSS', stream);
         if (stream) {
             postGetUserMedia();
         }

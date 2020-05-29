@@ -7854,6 +7854,21 @@ var Easyrtc = function() {
     };
 
     /**
+     * Disconnect and turn off camera and local stream.
+     * @param videoObj document.getElementById('local_video');
+     */
+    this.turnOff = function(videoObj) {
+        easyrtc.disconnect();
+        self.clearMediaStream(videoObj);
+        var stream = self.getLocalStream();
+        var tracks = stream.getTracks();
+        for (var i=0; i < tracks.length; i++) {
+            tracks[i].stop();
+        }
+        namedLocalMediaStreams = {};
+    }
+
+    /**
      * Initializes your access to a local camera and microphone.
      * Failure could be caused a browser that didn't support WebRTC, or by the user not granting permission.
      * If you are going to call easyrtc.enableAudio or easyrtc.enableVideo, you need to do it before
@@ -11913,6 +11928,7 @@ return new Easyrtc();
         }
 
         var stream = easyrtc.getLocalStream(null);
+        console.log('SSSS', stream);
         if (stream) {
             postGetUserMedia();
         }
