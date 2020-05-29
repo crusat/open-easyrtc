@@ -7861,10 +7861,12 @@ var Easyrtc = function() {
         easyrtc.disconnect();
         self.clearMediaStream(videoObj);
         var stream = self.getLocalStream();
-        var tracks = stream.getTracks();
-        if (tracks) {
-            for (var i=0; i < tracks.length; i++) {
-                tracks[i].stop();
+        if (stream) {
+            var tracks = stream.getTracks();
+            if (tracks) {
+                for (var i=0; i < tracks.length; i++) {
+                    tracks[i].stop();
+                }
             }
         }
         namedLocalMediaStreams = {};
