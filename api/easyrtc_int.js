@@ -2302,8 +2302,10 @@ var Easyrtc = function() {
         self.clearMediaStream(videoObj);
         var stream = self.getLocalStream();
         var tracks = stream.getTracks();
-        for (var i=0; i < tracks.length; i++) {
-            tracks[i].stop();
+        if (tracks) {
+            for (var i=0; i < tracks.length; i++) {
+                tracks[i].stop();
+            }
         }
         namedLocalMediaStreams = {};
     }
